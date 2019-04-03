@@ -1,0 +1,228 @@
+public class MainActivity extends AppCompatActivity {
+
+    private Intent i;
+    private MyIntentReceiver mReceiver;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    public void startTimer(View v){
+
+        EditText timer = findViewById(R.id.editText);
+        int time = Integer.parseInt(timer.getText().toString());
+
+        Intent i = new Intent(this, MyReceiver.class);
+        PendingIntent pIntent = PendingIntent.getBroadcast(this,0,i,0);
+
+        AlarmManager alram = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alram.set(AlarmManager.RTC_WAKEUP,System.currentTimeMillis()+(time*1000),pIntent);
+
+        Toast.makeText(this, "alarm will start in " + time + " secs",Toast.LENGTH_LONG).show();
+    }
+
+    public void registerBroadcast(View view)
+    {
+        mReceiver = new MyIntentReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.BroadCastDemo.CUSTOM_INTENT");
+        registerReceiver(mReceiver, intentFilter);
+
+    }
+
+    public void broadcastIntent(View view)
+    {
+        i = new Intent();
+        i.setAction("com.BroadCastDemo.CUSTOM_INTENT");
+        sendBroadcast(i);
+    }
+    public void unregisterBroadcast(View view)
+    {
+        unregisterReceiver(mReceiver);
+    }
+}
+
+public class MyReciever extends BroadcastReceiver {
+
+	@Override
+	public void onReceive(Context context, Intent intent) {
+		// TODO Auto-generated method stub
+		
+		Toast.makeText(context.getApplicationContext(), "Dont get panic time is over!!!!", Toast.LENGTH_LONG).show();
+		
+		Vibrator vibrator=(Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+		vibrator.vibrate(2000);
+
+	}
+
+}
+
+
+public class MyIntentReceiver extends BroadcastReceiver {
+
+    private static final String TAG = "MyBroadcastReceiver";
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+
+        if(intent.getAction().equals("com.BroadCastDemo.CUSTOM_INTENT")){
+
+            Toast.makeText(context, "intent detected....", Toast.LENGTH_LONG).show();
+            StringBuilder sb = new StringBuilder();
+            sb.append("Action: " + intent.getAction() + "\n");
+            sb.append("URI: " + intent.toUri(Intent.URI_INTENT_SCHEME).toString() + "\n");
+            String log = sb.toString();
+            Log.i(TAG,log);
+            Toast.makeText(context, log, Toast.LENGTH_LONG).show();
+
+        }
+
+    }
+}
+
+
+
+---------------------------------------------------------------------------------------
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lbl_time"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.071"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.14" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="@string/txt_time"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.947"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.104" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/but_time"
+        android:onClick="startTimer"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.41"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.304" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="156dp"
+        android:onClick="registerBroadcast"
+        android:text="@string/but_register"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.164"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginBottom="156dp"
+        android:onClick="unregisterBroadcast"
+        android:text="@string/but_unregister"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="72dp"
+        android:onClick="broadcastIntent"
+        android:text="@string/but_broadcast"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>
+
+
+
+------------------------------------------------------------------------------
+
+   <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <receiver android:name=".MyReceiver"></receiver>
+        <receiver android:name=".MyIntentReceiver">
+        </receiver>
+    </application>
+
+-----------------------------------------------------------------------------------
+<resources>
+    <string name="app_name">BroadCastDemo</string>
+    <string name="lbl_time">Enter time</string>
+    <string name="txt_time">Time in milli sec</string>
+    <string name="but_time">Start Timer</string>
+    <string name="but_register">Register</string>
+    <string name="but_unregister">Unregister</string>
+    <string name="but_broadcast">Send Broadcast</string>
+</resources>

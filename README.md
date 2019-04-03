@@ -1,4 +1,4 @@
 # Java
 Contains all Java related coding
 
-This code comprises of xml and java source code which is used to develop android application .
+All these files are comprised of basic java related operation and some are of the java android development.

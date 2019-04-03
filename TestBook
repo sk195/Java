@@ -1,0 +1,59 @@
+import java.util.Scanner;
+
+public class TestBookDB{
+
+	public static void main(String[] args){
+
+		Scanner sc = new Scanner(System.in);
+
+		System.out.println("Enter number of book");
+
+		int num = sc.nextInt();
+		Book bookDB[] = new Book[num];
+
+	    for(int i=0; i<num; i++){
+
+	    	 System.out.println("Enter book author,title,price,publisher,stock");
+	    	 String author= sc.next();
+	    	 String title= sc.next();
+	    	 double price= sc.nextDouble();
+	    	 String publisher= sc.next();
+	    	 int stock= sc.nextInt();
+
+	    	 bookDB[i]= new Book(author,title,price,publisher,stock);
+	    }
+        System.out.println("Start search book and issue......");
+        String choice="";
+
+        do{
+        	System.out.println("Enter title and author");
+        	String title = sc.next();
+        	String author = sc.next();
+
+        	for(int i=0; i<num; i++){
+        		if(bookDB[i].searchBook(title,author)){
+        			System.out.println(bookDB[i]);
+        			System.out.println("Enter number of copies");
+        				int copy = sc.nextInt();
+
+        				if(copy<=bookDB[i].getCopy()){
+                            double billAmount= copy * bookDB[i].getPrice();
+                            bookDB[i].update(copy);
+                            System.out.println("Successfully issued the books and total billAmount:");
+
+        				}
+
+
+        		}
+                else{
+                	System.out.println("No sufficient copies are available");
+                }
+        	}
+            System.out.println("Do you want to search one more book y/n");
+            choice = sc.next();
+
+        }while(choice.equals("y"));
+
+	}
+
+}

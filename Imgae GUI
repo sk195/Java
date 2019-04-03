@@ -1,0 +1,49 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import javax.swing.*;
+import java.io.*;
+import javax.imageio.ImageIO;
+
+public class ShowImage extends JPanel {
+  
+
+    private BufferedImage image;
+
+  	public ShowImage(String filename) {
+	
+		try {
+	      image = ImageIO.read(new File(filename));
+	    } catch (IOException ie) {
+	      ie.printStackTrace();
+	    }
+	    //setBounds(0, 0, image.getWidth(), image.getHeight());
+  	}
+
+	public int getWidth()
+	{
+		return image.getWidth();
+	}
+	
+	public int getHeight()
+	{
+		return image.getHeight();
+	}
+	
+    public void paint(Graphics g){
+    	g.drawImage(image, 0 , 0, null);
+    }
+
+  	static public void main(String args[]) throws Exception {
+  	
+	    JFrame frame = new JFrame("ShowImage.java");
+	    JPanel panel = new ShowImage("award.jpg");
+	    JScrollPane src_pane=new JScrollPane();
+	    src_pane.setViewportView(panel);
+	    frame.getContentPane().add(src_pane);
+	    frame.setSize(400, 400);
+	    //frame.setBounds(0, 0, panel.getWidth(), panel.getHeight());
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    frame.setVisible(true);
+	}
+}

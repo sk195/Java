@@ -1,0 +1,257 @@
+import java.util.Scanner;
+
+import java.awt.Frame;
+import java.awt.Label;
+import java.awt.TextField;
+import java.awt.Button;
+import java.awt.GridLayout;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
+
+public class LoginForm extends Frame implements ActionListener{
+
+	//Declaring UI Components
+	private Label lbl_user, lbl_pass;
+	private TextField txt_user, txt_pass;
+	private Button but_submit, but_reset;
+	DBase db;
+
+
+
+	LoginForm(String title){
+
+		super(title);
+
+
+		addWindowListener(new WindowAdapter(){
+
+
+			public void windowClosing(WindowEvent e)
+			{
+				System.exit(0);
+			}
+
+
+		});
+
+
+		
+
+		GridLayout layout = new GridLayout(3,2);
+		setLayout(layout);
+
+		//creating object of UI components
+		lbl_user = new Label("Username: ");
+		lbl_pass = new Label("Password: ");
+		txt_user = new TextField();
+		txt_pass = new TextField();
+		but_submit = new Button("Submit");
+		but_submit.addActionListener(this);
+		but_reset = new Button("Reset");
+		but_reset.addActionListener(this);
+
+
+		//adding ui components
+		add(lbl_user);
+		add(txt_user);
+		add(lbl_pass);
+		add(txt_pass);
+		add(but_submit);
+		add(but_reset);
+		db = new DBase();
+
+		setSize(300, 300);
+		setVisible(true);
+
+	}
+
+
+	
+	@Override
+	public void actionPerformed(ActionEvent e){
+
+		System.out.println("inside action....");
+		if(e.getSource() == but_reset){
+			System.out.println("inside reset....");
+			txt_user.setText(" ");
+			txt_pass.setText(" ");
+		}
+
+		else if(e.getSource()==but_submit){
+
+			try{
+				String user=txt_user.getText();
+				String pass=txt_pass.getText();
+
+				if(LoginDB(user,pass)==1){
+
+				}
+
+				}catch(Exception ex){
+
+			}
+
+		}
+
+	}
+
+
+	  public  int LoginDB(String username,String password){
+
+		
+		String drivername = "com.mysql.jdbc.Driver";
+		String databasename = "jdbc:mysql://localhost:3306/users";
+
+		
+
+		if(db.loadDriver(drivername)!=1){
+			System.out.println("unable to load driver.....");
+			return 1;
+
+		}
+		
+		System.out.println("successfully loaded driver....");
+
+		
+		if(db.connectDB(databasename)!=1){
+
+			System.out.println("unable to create connection.....");
+			return 1;
+
+
+		}
+		System.out.println("successfully connected....");
+
+		if(db.createDBStatement()!=1){
+
+			System.out.println("unable to create statment.....");
+			return 1;
+
+
+		}
+		System.out.println("successfully created statment....");
+
+
+		db.retriveRecords("select * from users");
+		try{
+
+		while(db.rs.next()){
+			if((db.rs.getString(1).equals(username)) && (db.rs.getString(1).equals(password))){
+
+
+				return 1;
+
+			}
+			/*System.out.println(" ");
+			
+			System.out.print(" "+ db.rs.getString(1));
+			System.out.print(" "+ db.rs.getString(2));
+			//System.out.print(" "+ db.rs.getFloat(3));*/
+		}
+		
+
+	}catch(Exception e){
+
+	}
+	db.closeObjects();
+	return 0;
+
+
+
+	}
+
+
+
+	public static void main(String[] args) {
+			
+			new LoginForm("Login Screen");
+			//LoginDB();
+
+	}
+
+}
+
+//Database
+mport java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.ResultSet;
+
+
+class DBase{
+
+	private Connection con;
+	private Statement stm;
+
+	ResultSet rs;
+
+	public int loadDriver(String driver){
+
+		try{
+
+			Class.forName(driver);	
+			return 1;
+		}
+		catch(Exception e){
+			System.out.println(e);
+			return -1;
+		}
+		
+	}
+
+	public int connectDB(String db){
+
+		try{
+
+			con = DriverManager.getConnection(db, "sharath", "sharath01");
+			return 1;
+		}
+		catch(Exception e){
+			System.out.println(e);
+			return -1;
+		}
+		
+	}
+
+	
+	public int createDBStatement(){
+
+		try{
+
+			stm = con.createStatement();
+			return 1;
+		}
+		catch(Exception e){
+			System.out.println(e);
+			return -1;
+		}
+	}
+
+	public void retriveRecords(String sql){
+
+		try{
+
+			rs = stm.executeQuery(sql);
+			
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+	}
+
+	public void closeObjects(){
+
+		try{
+			con.close();
+			stm.close();
+			rs.close();
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+	}
+
+}

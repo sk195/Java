@@ -1,0 +1,43 @@
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.JPanel;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+
+public class ImagePanel extends JPanel{
+
+    private BufferedImage image;
+
+    public ImagePanel(String file) {
+       try {                
+          image = ImageIO.read(new File(file));
+       } catch (IOException ex) {
+            // handle exception...
+       }
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        g.drawImage(image, 0, 0, this); // see javadoc for more info on the parameters            
+    }
+
+    static public void main(String args[]) throws Exception {
+    
+      JFrame frame = new JFrame("ShowImage.java");
+      JPanel panel = new ImagePanel("award.jpg");
+      JScrollPane src_pane=new JScrollPane();
+      src_pane.setViewportView(panel);
+      frame.getContentPane().add(src_pane);
+      frame.setSize(400, 400);
+      //frame.setBounds(0, 0, panel.getWidth(), panel.getHeight());
+      frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      frame.setVisible(true);
+  }
+
+}
